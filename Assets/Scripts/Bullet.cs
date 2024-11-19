@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-
+    public GameObject explosionPrefab;
     public float speed = 20f;
     public float lifetime = 2f;
     // Start is called before the first frame update
     void Start()
     {
-        Destroy(gameObject, lifetime);
+        Invoke("SelfDestruct", lifetime);
     }
 
     // Update is called once per frame
@@ -23,6 +23,17 @@ public class Bullet : MonoBehaviour
     {
         //todo: explosion effect
         //todo: damage enemy
+        var health = collision.gameObject.GetComponent<Health>();
+        if (health != null)
+        {
+            health.TakeDamage(10);
+        }
+
+        SelfDestruct();
+    }
+    void SelfDestruct()
+    {
+        Instantiate(explosionPrefab, transform.position, transform.rotation);
         Destroy(gameObject);
     }
 }
