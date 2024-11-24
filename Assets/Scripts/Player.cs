@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -13,17 +16,52 @@ public class Player : MonoBehaviour
     public float fireRate = 0.5f;
     public AudioClip bulletSound;
     public AudioSource audsrc;
-
+    private Health playerHealth;
+    private bool block = false;
+    public TextMeshProUGUI decided;
+    public TextMeshProUGUI replayIn;
+    public int timeUntilReplay = 5;
     void Start()
     {
         InvokeRepeating("Shoot", 0, fireRate);
         audsrc = GetComponent<AudioSource>();
+        decided.gameObject.SetActive(false);
+        replayIn.gameObject.SetActive(false);
+        playerHealth = FindObjectOfType<Health>();
+
     }
     private void Shoot()
     {
         Instantiate(bulletPrefab, bulletSpawn.position, transform.rotation);
         audsrc.pitch = Random.Range(0.8f, 1.1f);
         audsrc.PlayOneShot(bulletSound);
+    }
+    private void Decider()
+    {
+        decided.gameObject.SetActive(true);
+        replayIn.gameObject.SetActive(true);
+        if (isPlayer1)
+        {
+            decided.text = "Player 1 won!";
+        }
+        else
+        {
+            decided.text = "Player 2 won!";
+        }
+        InvokeRepeating("Replay", 0, 1);
+
+    }
+    private void Replay()
+    {
+        if (timeUntilReplay > 0)
+        {
+            replayIn.text = "Replaying in: " + timeUntilReplay;
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        timeUntilReplay--;
     }
     void Update()
     {
@@ -45,5 +83,11 @@ public class Player : MonoBehaviour
         {
             transform.forward = input;
         }
+        if (playerHealth.health <= 0 && block == false) 
+        {
+            Decider();
+            block = true;
+        }
+            
     }
 }

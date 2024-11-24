@@ -7,7 +7,8 @@ public class Health : MonoBehaviour
     public Transform healthBar;
     public int maxHealth = 100;
 
-    private int health;
+    [HideInInspector]public int health;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +31,5 @@ public class Health : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 }
